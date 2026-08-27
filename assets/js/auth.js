@@ -6,6 +6,7 @@ import {
 
 const form = document.getElementById("login-form");
 const errorEl = document.getElementById("login-error");
+const submitBtn = document.getElementById("login-submit");
 
 // Se l'utente è già loggato e apre di nuovo la pagina di login, mandalo direttamente alla dashboard.
 onAuthStateChanged(auth, (user) => {
@@ -21,10 +22,15 @@ form.addEventListener("submit", async (e) => {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Accesso in corso...";
+
   try {
     await signInWithEmailAndPassword(auth, email, password);
     window.location.href = "dashboard.html";
   } catch (err) {
     errorEl.textContent = "Accesso non riuscito. Controlla email e password.";
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Accedi";
   }
 });

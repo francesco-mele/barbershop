@@ -4,20 +4,25 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Calendario prenotazioni - Barbiere</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✂️</text></svg>" />
 <link rel="stylesheet" href="assets/css/style.css" />
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales-all.global.min.js"></script>
 </head>
 <body>
 <header class="site-header">
-  <h1>Calendario prenotazioni</h1>
-  <a href="admin/login.html">Area barbiere</a>
+  <div class="brand">
+    <span class="icon">✂️</span>
+    <h1>Calendario prenotazioni</h1>
+  </div>
+  <a href="admin/login.html" class="header-link">Area barbiere</a>
 </header>
 
 <main>
   <div class="card">
-    <p class="legend">Vista pubblica: mostra solo gli orari occupati. Per prenotare, contatta direttamente il barbiere.</p>
-    <div id="calendar"></div>
+    <p class="legend"><span class="legend-dot"></span> Gli slot colorati indicano orari già occupati o di chiusura. Per prenotare, contatta direttamente il barbiere.</p>
+    <div id="loading" class="loading-indicator"><span class="spinner"></span> Caricamento calendario...</div>
+    <div id="calendar" style="display:none;"></div>
   </div>
 </main>
 

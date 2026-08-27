@@ -4,28 +4,130 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Gestione appuntamenti - Barbiere</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✂️</text></svg>" />
 <link rel="stylesheet" href="../assets/css/style.css" />
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales-all.global.min.js"></script>
 </head>
 <body>
 <header class="site-header">
-  <h1>Gestione appuntamenti</h1>
-  <a href="#" id="logout-link">Esci</a>
+  <div class="brand">
+    <span class="icon">✂️</span>
+    <h1>Gestione appuntamenti</h1>
+  </div>
+  <a href="#" id="logout-link" class="header-link">Esci</a>
 </header>
 
 <main>
-  <div class="card">
-    <p class="legend">Clicca su uno slot libero per creare un appuntamento, oppure su un appuntamento esistente per modificarlo o cancellarlo.</p>
-    <div id="calendar"></div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="tab-calendario">Calendario</button>
+    <button class="tab-btn" data-tab="tab-servizi">Servizi</button>
+    <button class="tab-btn" data-tab="tab-orari">Orari e chiusure</button>
+  </div>
 
-    <div class="services-panel">
-      <h2>Servizi</h2>
+  <!-- TAB CALENDARIO -->
+  <div class="tab-panel active" id="tab-calendario">
+    <div class="card">
+      <p class="legend"><span class="legend-dot"></span> Clicca su uno slot libero per creare un appuntamento, oppure su un appuntamento esistente per modificarlo o cancellarlo.</p>
+      <div id="loading" class="loading-indicator"><span class="spinner"></span> Caricamento calendario...</div>
+      <div id="calendar" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- TAB SERVIZI -->
+  <div class="tab-panel" id="tab-servizi">
+    <div class="card services-panel">
+      <h2>Servizi offerti</h2>
+      <p class="hint-text">Questi servizi compaiono nel menu a tendina quando crei un appuntamento.</p>
       <div id="services-list"></div>
       <form class="add-service-form" id="add-service-form">
         <input type="text" id="new-service-name" placeholder="Nome nuovo servizio" required />
         <button type="submit" class="secondary">Aggiungi</button>
       </form>
+    </div>
+  </div>
+
+  <!-- TAB ORARI -->
+  <div class="tab-panel" id="tab-orari">
+    <div class="card orari-panel">
+      <h2>Orari e chiusure</h2>
+
+      <div class="orari-section">
+        <h3>Giorni di chiusura settimanali</h3>
+        <p class="hint-text">Seleziona i giorni in cui il negozio è sempre chiuso.</p>
+        <div class="weekday-grid" id="weekday-grid">
+          <label class="weekday-chip"><input type="checkbox" value="1" /> Lunedì</label>
+          <label class="weekday-chip"><input type="checkbox" value="2" /> Martedì</label>
+          <label class="weekday-chip"><input type="checkbox" value="3" /> Mercoledì</label>
+          <label class="weekday-chip"><input type="checkbox" value="4" /> Giovedì</label>
+          <label class="weekday-chip"><input type="checkbox" value="5" /> Venerdì</label>
+          <label class="weekday-chip"><input type="checkbox" value="6" /> Sabato</label>
+          <label class="weekday-chip"><input type="checkbox" value="0" /> Domenica</label>
+        </div>
+      </div>
+
+      <div class="orari-section">
+        <h3>Pausa giornaliera ricorrente</h3>
+        <p class="hint-text">Es. pausa pranzo, applicata automaticamente tutti i giorni.</p>
+        <div class="checkbox-row">
+          <input type="checkbox" id="pausa-attiva" />
+          <label for="pausa-attiva">Attiva pausa giornaliera</label>
+        </div>
+        <div class="pausa-fields">
+          <div>
+            <label for="pausa-inizio">Inizio pausa</label>
+            <input type="time" id="pausa-inizio" value="13:00" />
+          </div>
+          <div>
+            <label for="pausa-fine">Fine pausa</label>
+            <input type="time" id="pausa-fine" value="14:00" />
+          </div>
+        </div>
+        <button type="button" class="secondary" id="save-orari-btn" style="margin-top:0.8rem;">Salva orari</button>
+        <span class="error-text" id="orari-error"></span>
+      </div>
+
+      <div class="orari-section">
+        <h3>Chiusure per data intera</h3>
+        <p class="hint-text">Es. ferie, festività. Blocca l'intera giornata indicata.</p>
+        <div id="closures-day-list"></div>
+        <form class="add-closure-form" id="add-closure-day-form">
+          <div>
+            <label for="closure-day-date">Data</label>
+            <input type="date" id="closure-day-date" required />
+          </div>
+          <div>
+            <label for="closure-day-motivo">Motivo (facoltativo)</label>
+            <input type="text" id="closure-day-motivo" placeholder="es. Ferie" />
+          </div>
+          <button type="submit" class="secondary">Aggiungi</button>
+        </form>
+      </div>
+
+      <div class="orari-section">
+        <h3>Chiusure per fascia oraria in una data specifica</h3>
+        <p class="hint-text">Es. un appuntamento personale in un giorno normalmente aperto.</p>
+        <div id="closures-time-list"></div>
+        <form class="add-closure-form" id="add-closure-time-form">
+          <div>
+            <label for="closure-time-date">Data</label>
+            <input type="date" id="closure-time-date" required />
+          </div>
+          <div>
+            <label for="closure-time-inizio">Dalle</label>
+            <input type="time" id="closure-time-inizio" required />
+          </div>
+          <div>
+            <label for="closure-time-fine">Alle</label>
+            <input type="time" id="closure-time-fine" required />
+          </div>
+          <div>
+            <label for="closure-time-motivo">Motivo (facoltativo)</label>
+            <input type="text" id="closure-time-motivo" placeholder="es. Visita medica" />
+          </div>
+          <button type="submit" class="secondary">Aggiungi</button>
+        </form>
+      </div>
     </div>
   </div>
 </main>
@@ -68,6 +170,8 @@
     </form>
   </div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script type="module" src="../assets/js/admin-calendar.js"></script>
 </body>

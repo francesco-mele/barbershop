@@ -22,9 +22,12 @@ firestore.rules                 regole di sicurezza Firestore da caricare in con
 
 ## Modello dati
 
-- **appuntamenti_pubblici/{id}** → `data`, `ora`, `durata`, `servizio` — leggibile da chiunque, scrivibile solo dal barbiere autenticato.
+- **appuntamenti_pubblici/{id}** → `data`, `ora`, `durata`, `servizio` — leggibile da chiunque, scrivibile solo dal barbiere autenticato. Nella vista pubblica il servizio non viene mostrato: lo slot appare semplicemente come "Occupato".
 - **appuntamenti_privati/{id}** (stesso id del documento pubblico collegato) → `nomeCliente`, `telefono`, `note` — leggibile e scrivibile solo dal barbiere autenticato.
 - **servizi/{id}** → `nome` — lista dei servizi offerti, leggibile da chiunque, modificabile solo dal barbiere autenticato (gestibile direttamente dalla dashboard).
+- **config/orari** (documento singolo) → `giorniChiusuraSettimanali` (array di numeri 0-6, 0=domenica), `pausaAttiva` (bool), `pausaInizio`, `pausaFine` (`HH:MM`) — leggibile da chiunque, scrivibile solo dal barbiere.
+- **chiusure_giorno/{id}** → `data` (`YYYY-MM-DD`), `motivo` — chiusure per giornata intera (es. ferie), leggibile da chiunque, scrivibile solo dal barbiere.
+- **chiusure_orario/{id}** → `data`, `oraInizio`, `oraFine`, `motivo` — chiusure per una fascia oraria in una data specifica, leggibile da chiunque, scrivibile solo dal barbiere.
 
 ## Configurazione passo-passo
 

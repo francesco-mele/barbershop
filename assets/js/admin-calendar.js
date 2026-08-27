@@ -22,7 +22,32 @@ document.getElementById("logout-link").addEventListener("click", async (e) => {
   window.location.href = "login.html";
 });
 
-// --- Riferimenti DOM ---
+// --- Toast di conferma/errore ---
+const toastEl = document.getElementById("toast");
+let toastTimer;
+function mostraToast(messaggio, tipo) {
+  clearTimeout(toastTimer);
+  toastEl.textContent = messaggio;
+  toastEl.className = "toast show" + (tipo === "error" ? " error" : "");
+  toastTimer = setTimeout(() => {
+    toastEl.className = "toast";
+  }, 2600);
+}
+
+// --- Gestione tab ---
+document.querySelectorAll(".tab-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById(btn.dataset.tab).classList.add("active");
+    if (btn.dataset.tab === "tab-calendario") {
+      setTimeout(() => calendar.updateSize(), 50);
+    }
+  });
+});
+
+// --- Riferimenti DOM modale appuntamento ---
 const overlay = document.getElementById("appointment-overlay");
 const modalTitle = document.getElementById("modal-title");
 const form = document.getElementById("appointment-form");
@@ -37,9 +62,6 @@ const noteInput = document.getElementById("app-note");
 const errorEl = document.getElementById("appointment-error");
 const deleteBtn = document.getElementById("delete-btn");
 const cancelBtn = document.getElementById("cancel-btn");
-
-let currentPrivateData = {}; // cache dati privati per unione con quelli pubblici nel calendario
-let serviziCache = [];
 
 function openModal(mode, evento) {
   errorEl.textContent = "";
@@ -81,6 +103,7 @@ cancelBtn.addEventListener("click", closeModal);
 
 // --- Calendario ---
 const calendarEl = document.getElementById("calendar");
+const loadingEl = document.getElementById("loading");
 const calendar = new FullCalendar.Calendar(calendarEl, {
   initialView: "timeGridWeek",
   locale: "it",
@@ -94,17 +117,35 @@ const calendar = new FullCalendar.Calendar(calendarEl, {
   allDaySlot: false,
   height: "auto",
   selectable: true,
+  hiddenDays: [],
   dateClick: (info) => openModal("new", info),
-  eventClick: (info) => openModal("edit", info.event)
+  eventClick: (info) => {
+    if (info.event.display === "background") return; // le chiusure si gestiscono dalla tab "Orari"
+    openModal("edit", info.event);
+  }
 });
-calendar.render();
 
-// --- Sincronizzazione dati privati e pubblici, unione per il rendering ---
+let calendarShown = false;
+function mostraCalendario() {
+  if (calendarShown) return;
+  calendarShown = true;
+  loadingEl.style.display = "none";
+  calendarEl.style.display = "block";
+  calendar.render();
+}
+
+// --- Stato locale per la ricostruzione del calendario ---
 let pubbliciSnapshot = {};
 let privatiSnapshot = {};
+let giorniChiusuraSettimanali = [];
+let pausa = null;
+let chiusureGiornoSnap = {};
+let chiusureOrarioSnap = {};
 
 function ricostruisciCalendario() {
+  calendar.setOption("hiddenDays", giorniChiusuraSettimanali);
   calendar.removeAllEvents();
+
   Object.keys(pubbliciSnapshot).forEach((id) => {
     const pub = pubbliciSnapshot[id];
     const priv = privatiSnapshot[id] || {};
@@ -119,25 +160,54 @@ function ricostruisciCalendario() {
       extendedProps: { pubblico: pub, privato: priv }
     });
   });
+
+  if (pausa && pausa.attiva && pausa.inizio && pausa.fine) {
+    calendar.addEvent({
+      title: "Chiuso (pausa)",
+      daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
+      startTime: pausa.inizio,
+      endTime: pausa.fine,
+      display: "background",
+      color: "#c9756a"
+    });
+  }
+
+  Object.values(chiusureGiornoSnap).forEach((c) => {
+    calendar.addEvent({
+      title: c.motivo ? `Chiuso - ${c.motivo}` : "Chiuso",
+      start: c.data,
+      allDay: true,
+      display: "background",
+      color: "#c9756a"
+    });
+  });
+
+  Object.values(chiusureOrarioSnap).forEach((c) => {
+    calendar.addEvent({
+      title: c.motivo ? `Chiuso - ${c.motivo}` : "Chiuso",
+      start: `${c.data}T${c.oraInizio}`,
+      end: `${c.data}T${c.oraFine}`,
+      display: "background",
+      color: "#c9756a"
+    });
+  });
+
+  mostraCalendario();
 }
 
 onSnapshot(collection(db, "appuntamenti_pubblici"), (snapshot) => {
   pubbliciSnapshot = {};
-  snapshot.forEach((docSnap) => {
-    pubbliciSnapshot[docSnap.id] = docSnap.data();
-  });
+  snapshot.forEach((docSnap) => { pubbliciSnapshot[docSnap.id] = docSnap.data(); });
   ricostruisciCalendario();
 });
 
 onSnapshot(collection(db, "appuntamenti_privati"), (snapshot) => {
   privatiSnapshot = {};
-  snapshot.forEach((docSnap) => {
-    privatiSnapshot[docSnap.id] = docSnap.data();
-  });
+  snapshot.forEach((docSnap) => { privatiSnapshot[docSnap.id] = docSnap.data(); });
   ricostruisciCalendario();
 });
 
-// --- Salvataggio (crea o aggiorna) ---
+// --- Salvataggio appuntamento (crea o aggiorna) ---
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   errorEl.textContent = "";
@@ -157,7 +227,6 @@ form.addEventListener("submit", async (e) => {
   try {
     let id = idInput.value;
     if (!id) {
-      // Genera un nuovo id condiviso tra le due collezioni
       const nuovoDocRef = doc(collection(db, "appuntamenti_pubblici"));
       id = nuovoDocRef.id;
       await setDoc(nuovoDocRef, datiPubblici);
@@ -167,13 +236,13 @@ form.addEventListener("submit", async (e) => {
       await setDoc(doc(db, "appuntamenti_privati", id), datiPrivati);
     }
     closeModal();
+    mostraToast("Appuntamento salvato");
   } catch (err) {
     errorEl.textContent = "Errore durante il salvataggio. Riprova.";
     console.error(err);
   }
 });
 
-// --- Eliminazione ---
 deleteBtn.addEventListener("click", async () => {
   const id = idInput.value;
   if (!id) return;
@@ -183,6 +252,7 @@ deleteBtn.addEventListener("click", async () => {
     await deleteDoc(doc(db, "appuntamenti_pubblici", id));
     await deleteDoc(doc(db, "appuntamenti_privati", id));
     closeModal();
+    mostraToast("Appuntamento eliminato");
   } catch (err) {
     errorEl.textContent = "Errore durante l'eliminazione. Riprova.";
     console.error(err);
@@ -195,22 +265,26 @@ const addServiceForm = document.getElementById("add-service-form");
 const newServiceInput = document.getElementById("new-service-name");
 
 onSnapshot(collection(db, "servizi"), (snapshot) => {
-  serviziCache = [];
   servicesListEl.innerHTML = "";
   servizioSelect.innerHTML = "";
 
+  if (snapshot.empty) {
+    servicesListEl.innerHTML = '<p class="empty-state">Nessun servizio ancora. Aggiungine uno qui sotto.</p>';
+  }
+
   snapshot.forEach((docSnap) => {
     const nome = docSnap.data().nome;
-    serviziCache.push({ id: docSnap.id, nome });
 
     const row = document.createElement("div");
     row.className = "service-row";
     row.innerHTML = `<span>${nome}</span>`;
     const delBtn = document.createElement("button");
+    delBtn.className = "link-btn";
     delBtn.textContent = "Elimina";
     delBtn.addEventListener("click", async () => {
       if (confirm(`Eliminare il servizio "${nome}"?`)) {
         await deleteDoc(doc(db, "servizi", docSnap.id));
+        mostraToast("Servizio eliminato");
       }
     });
     row.appendChild(delBtn);
@@ -229,4 +303,148 @@ addServiceForm.addEventListener("submit", async (e) => {
   if (!nome) return;
   await addDoc(collection(db, "servizi"), { nome });
   newServiceInput.value = "";
+  mostraToast("Servizio aggiunto");
+});
+
+// --- Orari: giorni di chiusura settimanali + pausa giornaliera ---
+const weekdayGrid = document.getElementById("weekday-grid");
+const pausaAttivaInput = document.getElementById("pausa-attiva");
+const pausaInizioInput = document.getElementById("pausa-inizio");
+const pausaFineInput = document.getElementById("pausa-fine");
+const saveOrariBtn = document.getElementById("save-orari-btn");
+const orariErrorEl = document.getElementById("orari-error");
+
+onSnapshot(doc(db, "config", "orari"), (docSnap) => {
+  const dati = docSnap.data() || {};
+  giorniChiusuraSettimanali = dati.giorniChiusuraSettimanali || [];
+  pausa = { attiva: dati.pausaAttiva, inizio: dati.pausaInizio, fine: dati.pausaFine };
+
+  weekdayGrid.querySelectorAll("input[type=checkbox]").forEach((cb) => {
+    cb.checked = giorniChiusuraSettimanali.includes(Number(cb.value));
+  });
+  pausaAttivaInput.checked = !!dati.pausaAttiva;
+  if (dati.pausaInizio) pausaInizioInput.value = dati.pausaInizio;
+  if (dati.pausaFine) pausaFineInput.value = dati.pausaFine;
+
+  ricostruisciCalendario();
+});
+
+saveOrariBtn.addEventListener("click", async () => {
+  orariErrorEl.textContent = "";
+  const giorniSelezionati = Array.from(weekdayGrid.querySelectorAll("input[type=checkbox]:checked")).map((cb) => Number(cb.value));
+
+  try {
+    await setDoc(doc(db, "config", "orari"), {
+      giorniChiusuraSettimanali: giorniSelezionati,
+      pausaAttiva: pausaAttivaInput.checked,
+      pausaInizio: pausaInizioInput.value,
+      pausaFine: pausaFineInput.value
+    });
+    mostraToast("Orari salvati");
+  } catch (err) {
+    orariErrorEl.textContent = "Errore durante il salvataggio degli orari.";
+    console.error(err);
+  }
+});
+
+// --- Chiusure per data intera ---
+const closuresDayListEl = document.getElementById("closures-day-list");
+const addClosureDayForm = document.getElementById("add-closure-day-form");
+
+onSnapshot(collection(db, "chiusure_giorno"), (snapshot) => {
+  chiusureGiornoSnap = {};
+  closuresDayListEl.innerHTML = "";
+
+  if (snapshot.empty) {
+    closuresDayListEl.innerHTML = '<p class="empty-state">Nessuna chiusura per data intera.</p>';
+  }
+
+  const righe = [];
+  snapshot.forEach((docSnap) => {
+    chiusureGiornoSnap[docSnap.id] = docSnap.data();
+    righe.push({ id: docSnap.id, ...docSnap.data() });
+  });
+  righe.sort((a, b) => a.data.localeCompare(b.data));
+
+  righe.forEach((c) => {
+    const row = document.createElement("div");
+    row.className = "closure-row";
+    row.innerHTML = `<div class="closure-info"><div class="closure-date">${c.data}</div>${c.motivo ? `<div class="closure-motivo">${c.motivo}</div>` : ""}</div>`;
+    const delBtn = document.createElement("button");
+    delBtn.className = "link-btn";
+    delBtn.textContent = "Elimina";
+    delBtn.addEventListener("click", async () => {
+      if (confirm("Eliminare questa chiusura?")) {
+        await deleteDoc(doc(db, "chiusure_giorno", c.id));
+        mostraToast("Chiusura eliminata");
+      }
+    });
+    row.appendChild(delBtn);
+    closuresDayListEl.appendChild(row);
+  });
+
+  ricostruisciCalendario();
+});
+
+addClosureDayForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const data = document.getElementById("closure-day-date").value;
+  const motivo = document.getElementById("closure-day-motivo").value.trim();
+  if (!data) return;
+
+  await addDoc(collection(db, "chiusure_giorno"), { data, motivo });
+  addClosureDayForm.reset();
+  mostraToast("Chiusura aggiunta");
+});
+
+// --- Chiusure per fascia oraria in data specifica ---
+const closuresTimeListEl = document.getElementById("closures-time-list");
+const addClosureTimeForm = document.getElementById("add-closure-time-form");
+
+onSnapshot(collection(db, "chiusure_orario"), (snapshot) => {
+  chiusureOrarioSnap = {};
+  closuresTimeListEl.innerHTML = "";
+
+  if (snapshot.empty) {
+    closuresTimeListEl.innerHTML = '<p class="empty-state">Nessuna chiusura per fascia oraria specifica.</p>';
+  }
+
+  const righe = [];
+  snapshot.forEach((docSnap) => {
+    chiusureOrarioSnap[docSnap.id] = docSnap.data();
+    righe.push({ id: docSnap.id, ...docSnap.data() });
+  });
+  righe.sort((a, b) => (a.data + a.oraInizio).localeCompare(b.data + b.oraInizio));
+
+  righe.forEach((c) => {
+    const row = document.createElement("div");
+    row.className = "closure-row";
+    row.innerHTML = `<div class="closure-info"><div class="closure-date">${c.data} · ${c.oraInizio}-${c.oraFine}</div>${c.motivo ? `<div class="closure-motivo">${c.motivo}</div>` : ""}</div>`;
+    const delBtn = document.createElement("button");
+    delBtn.className = "link-btn";
+    delBtn.textContent = "Elimina";
+    delBtn.addEventListener("click", async () => {
+      if (confirm("Eliminare questa chiusura?")) {
+        await deleteDoc(doc(db, "chiusure_orario", c.id));
+        mostraToast("Chiusura eliminata");
+      }
+    });
+    row.appendChild(delBtn);
+    closuresTimeListEl.appendChild(row);
+  });
+
+  ricostruisciCalendario();
+});
+
+addClosureTimeForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const data = document.getElementById("closure-time-date").value;
+  const oraInizio = document.getElementById("closure-time-inizio").value;
+  const oraFine = document.getElementById("closure-time-fine").value;
+  const motivo = document.getElementById("closure-time-motivo").value.trim();
+  if (!data || !oraInizio || !oraFine) return;
+
+  await addDoc(collection(db, "chiusure_orario"), { data, oraInizio, oraFine, motivo });
+  addClosureTimeForm.reset();
+  mostraToast("Chiusura aggiunta");
 });
