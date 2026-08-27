@@ -156,7 +156,7 @@ function ricostruisciCalendario() {
       title: `${pub.servizio || "Servizio"} - ${priv.nomeCliente || ""}`,
       start: inizio,
       end: fine,
-      color: "#6b4226",
+      color: "#9E3B36",
       extendedProps: { pubblico: pub, privato: priv }
     });
   });
@@ -168,7 +168,7 @@ function ricostruisciCalendario() {
       startTime: pausa.inizio,
       endTime: pausa.fine,
       display: "background",
-      color: "#c9756a"
+      color: "#C79A4E"
     });
   }
 
@@ -178,7 +178,7 @@ function ricostruisciCalendario() {
       start: c.data,
       allDay: true,
       display: "background",
-      color: "#c9756a"
+      color: "#C79A4E"
     });
   });
 
@@ -188,7 +188,7 @@ function ricostruisciCalendario() {
       start: `${c.data}T${c.oraInizio}`,
       end: `${c.data}T${c.oraFine}`,
       display: "background",
-      color: "#c9756a"
+      color: "#C79A4E"
     });
   });
 

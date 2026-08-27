@@ -1,19 +1,20 @@
 :root {
-  --marrone: #5c3a21;
-  --marrone-scuro: #452a18;
-  --marrone-chiaro: #8b5e3c;
-  --oro: #c9a15f;
-  --crema: #faf6f0;
-  --crema-scura: #f0e8dc;
-  --testo: #2b2420;
-  --testo-secondario: #6b6058;
-  --bordo: #e3d9c9;
-  --errore: #b3261e;
-  --successo: #3a7d44;
-  --occupato: #8b5e3c;
-  --chiuso: #c9756a;
-  --ombra: 0 2px 10px rgba(69, 42, 24, 0.08);
-  --ombra-modal: 0 10px 40px rgba(69, 42, 24, 0.25);
+  --ink: #17130F;         /* fondo espresso */
+  --ink-2: #211A14;       /* pannelli */
+  --ink-3: #2B221A;       /* celle / hover */
+  --line: #3C3025;        /* filetti ottone scuro */
+  --cream: #F3ECDD;       /* testo carta */
+  --cream-dim: #AFA48F;   /* testo attenuato */
+  --brass: #C79A4E;       /* accento ottone */
+  --brass-hi: #E4BE71;    /* ottone chiaro */
+  --occupato: #9E3B36;    /* rosso barbiere */
+  --occupato-hi: #DE9C98;
+  --chiuso-testo: #AFA48F;
+  --errore: #c0453f;
+  --successo: #6E9068;
+  --bordo: var(--line);
+  --ombra: 0 18px 40px -24px rgba(0, 0, 0, 0.6);
+  --ombra-modal: 0 20px 60px -20px rgba(0, 0, 0, 0.75);
 }
 
 * {
@@ -26,58 +27,117 @@ html, body {
 
 body {
   margin: 0;
-  font-family: "Segoe UI", Roboto, Arial, sans-serif;
-  background: var(--crema);
-  color: var(--testo);
+  font-family: "Inter", system-ui, sans-serif;
+  background:
+    radial-gradient(120% 80% at 50% -10%, #241B14 0%, var(--ink) 60%) fixed,
+    var(--ink);
+  color: var(--cream);
   -webkit-font-smoothing: antialiased;
 }
 
-/* ---------- Header ---------- */
+/* ---------- Header "insegna" ---------- */
 
 header.site-header {
-  background: linear-gradient(135deg, var(--marrone) 0%, var(--marrone-scuro) 100%);
-  color: #fff;
-  padding: 1.1rem 1.5rem;
+  position: relative;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  box-shadow: var(--ombra);
+  justify-content: space-between;
+  gap: 16px;
+  background: linear-gradient(180deg, #241B14, #160F0B);
+  border: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 1.1rem 1.5rem;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, var(--ombra);
   position: sticky;
   top: 0;
   z-index: 20;
 }
 
+header.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border-radius: 9px;
+  border: 1px solid rgba(199, 154, 78, 0.35);
+  pointer-events: none;
+}
+
 header.site-header .brand {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.9rem;
 }
 
-header.site-header .brand .icon {
-  font-size: 1.5rem;
+header.site-header .pole {
+  flex: 0 0 auto;
+  width: 12px;
+  height: 44px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--occupato) 0 6px,
+    var(--cream) 6px 12px,
+    #2E5B8A 12px 18px,
+    var(--cream) 18px 24px
+  );
+  background-size: 100% 34px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) inset;
+  animation: pole 2.4s linear infinite;
+}
+
+@keyframes pole {
+  to { background-position: 0 -34px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  header.site-header .pole { animation: none; }
+}
+
+header.site-header .brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+header.site-header .eyebrow {
+  font-family: "Oswald", sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  font-size: 10px;
+  color: var(--brass);
 }
 
 header.site-header h1 {
   margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: 0.2px;
+  font-family: "Bebas Neue", "Oswald", sans-serif;
+  font-weight: 400;
+  font-size: clamp(22px, 4vw, 30px);
+  letter-spacing: 0.02em;
+  color: var(--cream);
+  line-height: 1;
 }
 
 header.site-header a.header-link {
-  color: #fff;
+  font-family: "Oswald", sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--brass-hi);
   text-decoration: none;
-  font-size: 0.88rem;
-  font-weight: 600;
-  border: 1px solid rgba(255,255,255,0.55);
-  padding: 0.5rem 0.95rem;
-  border-radius: 6px;
-  transition: background 0.15s ease, transform 0.15s ease;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid var(--brass);
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  transition: background 0.15s ease, color 0.15s ease;
   white-space: nowrap;
 }
 
 header.site-header a.header-link:hover {
-  background: rgba(255,255,255,0.18);
+  background: var(--brass);
+  color: var(--ink);
 }
 
 /* ---------- Layout ---------- */
@@ -89,27 +149,30 @@ main {
 }
 
 .card {
-  background: #fff;
-  border: 1px solid var(--bordo);
-  border-radius: 10px;
+  background: var(--ink-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
   padding: 1.3rem;
   box-shadow: var(--ombra);
 }
 
 .legend {
-  font-size: 0.88rem;
-  color: var(--testo-secondario);
+  font-family: "Oswald", sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  color: var(--cream-dim);
   margin: 0 0 1rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  text-transform: uppercase;
 }
 
 .legend-dot {
   display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+  width: 11px;
+  height: 11px;
+  border-radius: 4px;
   background: var(--occupato);
   flex-shrink: 0;
 }
@@ -121,42 +184,58 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(160deg, var(--crema) 0%, var(--crema-scura) 100%);
+  background:
+    radial-gradient(120% 80% at 50% -10%, #241B14 0%, var(--ink) 60%) fixed,
+    var(--ink);
   padding: 1rem;
 }
 
 .login-card {
+  position: relative;
   width: 100%;
   max-width: 360px;
-  background: #fff;
-  border: 1px solid var(--bordo);
-  border-radius: 12px;
+  background: linear-gradient(180deg, #241B14, #160F0B);
+  border: 1px solid var(--line);
+  border-radius: 14px;
   padding: 2.2rem 2rem;
   box-shadow: var(--ombra-modal);
 }
 
+.login-card::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 9px;
+  border: 1px solid rgba(199, 154, 78, 0.35);
+  pointer-events: none;
+}
+
 .login-card .icon-badge {
-  width: 48px;
-  height: 48px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  background: var(--crema-scura);
+  background: var(--ink-3);
+  border: 1px solid var(--line);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  margin-bottom: 0.8rem;
+  font-size: 1.4rem;
+  margin-bottom: 0.9rem;
 }
 
 .login-card h1 {
   margin: 0 0 0.2rem;
-  font-size: 1.35rem;
-  color: var(--marrone);
+  font-family: "Bebas Neue", "Oswald", sans-serif;
+  font-weight: 400;
+  font-size: 1.7rem;
+  letter-spacing: 0.02em;
+  color: var(--cream);
 }
 
 .login-card p.subtitle {
   margin: 0 0 0.5rem;
-  font-size: 0.88rem;
-  color: var(--testo-secondario);
+  font-size: 0.85rem;
+  color: var(--cream-dim);
 }
 
 /* ---------- Form elements ---------- */
@@ -164,28 +243,35 @@ main {
 label {
   display: block;
   margin-top: 1rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--testo);
+  font-family: "Oswald", sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--cream-dim);
 }
 
 input, select, textarea {
   width: 100%;
   padding: 0.55rem 0.65rem;
   margin-top: 0.35rem;
-  border: 1px solid var(--bordo);
-  border-radius: 6px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
   font-size: 0.95rem;
-  font-family: inherit;
-  background: #fff;
-  color: var(--testo);
+  font-family: "Inter", sans-serif;
+  background: var(--ink);
+  color: var(--cream);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 input:focus, select:focus, textarea:focus {
   outline: none;
-  border-color: var(--marrone-chiaro);
-  box-shadow: 0 0 0 3px rgba(139, 94, 60, 0.15);
+  border-color: var(--brass);
+  box-shadow: 0 0 0 3px rgba(199, 154, 78, 0.18);
+}
+
+input::placeholder, textarea::placeholder {
+  color: #6b6055;
 }
 
 .checkbox-row {
@@ -203,76 +289,98 @@ input:focus, select:focus, textarea:focus {
 .checkbox-row label {
   margin: 0;
   font-weight: 500;
+  text-transform: none;
+  font-family: "Inter", sans-serif;
+  color: var(--cream);
+  font-size: 0.9rem;
+  letter-spacing: 0;
 }
 
 /* ---------- Buttons ---------- */
 
 button {
   cursor: pointer;
-  border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 0.6rem 1.1rem;
-  font-size: 0.92rem;
-  font-weight: 600;
-  font-family: inherit;
-  transition: background 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
+  font-size: 0.82rem;
+  font-weight: 500;
+  font-family: "Oswald", sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid var(--line);
+  background: var(--ink-2);
+  color: var(--cream);
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease, transform 0.1s ease;
 }
 
 button:active {
   transform: scale(0.98);
 }
 
+button:hover {
+  border-color: var(--brass);
+  color: var(--brass-hi);
+}
+
 button.primary {
-  background: var(--marrone);
-  color: #fff;
+  background: var(--brass);
+  color: var(--ink);
+  border-color: var(--brass);
   margin-top: 1.3rem;
   width: 100%;
 }
 
 button.primary:hover {
-  background: var(--marrone-chiaro);
+  background: var(--brass-hi);
+  border-color: var(--brass-hi);
+  color: var(--ink);
 }
 
 button.secondary {
-  background: var(--crema-scura);
-  color: var(--testo);
-}
-
-button.secondary:hover {
-  background: var(--bordo);
+  background: var(--ink-2);
+  color: var(--cream);
 }
 
 button.danger {
-  background: var(--errore);
-  color: #fff;
+  background: transparent;
+  color: var(--occupato-hi);
+  border-color: var(--occupato);
 }
 
 button.danger:hover {
-  opacity: 0.88;
+  background: var(--occupato);
+  color: var(--cream);
+  border-color: var(--occupato);
 }
 
 button.link-btn {
   background: transparent;
-  color: var(--errore);
+  border: none;
+  color: var(--occupato-hi);
   padding: 0.3rem 0.5rem;
-  font-size: 0.82rem;
+  font-size: 0.72rem;
+}
+
+button.link-btn:hover {
+  color: var(--occupato);
+  border-color: transparent;
 }
 
 button:disabled {
-  opacity: 0.55;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .error-text {
-  color: var(--errore);
-  font-size: 0.85rem;
+  color: var(--occupato-hi);
+  font-size: 0.82rem;
   min-height: 1.2em;
   margin-top: 0.5rem;
 }
 
 .hint-text {
-  color: var(--testo-secondario);
-  font-size: 0.82rem;
+  color: var(--cream-dim);
+  font-size: 0.8rem;
   margin-top: 0.3rem;
 }
 
@@ -281,13 +389,12 @@ button:disabled {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(43, 36, 32, 0.5);
+  background: rgba(8, 6, 4, 0.72);
   display: none;
   align-items: center;
   justify-content: center;
   padding: 1rem;
   z-index: 50;
-  backdrop-filter: blur(1px);
 }
 
 .overlay.open {
@@ -295,8 +402,9 @@ button:disabled {
 }
 
 .modal {
-  background: #fff;
-  border-radius: 12px;
+  background: var(--ink-2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
   padding: 1.6rem;
   width: 100%;
   max-width: 440px;
@@ -307,8 +415,11 @@ button:disabled {
 
 .modal h2 {
   margin-top: 0;
-  color: var(--marrone);
-  font-size: 1.2rem;
+  font-family: "Bebas Neue", "Oswald", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--cream);
+  font-size: 1.5rem;
 }
 
 .modal-actions {
@@ -323,45 +434,35 @@ button:disabled {
   min-width: 100px;
 }
 
-.type-toggle {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.4rem;
-}
-
-.type-toggle button {
-  flex: 1;
-  background: var(--crema-scura);
-  color: var(--testo);
-}
-
-.type-toggle button.active {
-  background: var(--marrone);
-  color: #fff;
-}
-
 /* ---------- Tabs (dashboard) ---------- */
 
 .tabs {
   display: flex;
   gap: 0.4rem;
   margin-bottom: 1.2rem;
-  border-bottom: 1px solid var(--bordo);
+  border-bottom: 1px solid var(--line);
   overflow-x: auto;
 }
 
 .tab-btn {
   background: transparent;
-  border-radius: 6px 6px 0 0;
-  color: var(--testo-secondario);
+  border: none;
+  border-radius: 8px 8px 0 0;
+  color: var(--cream-dim);
   padding: 0.65rem 1rem;
   white-space: nowrap;
 }
 
+.tab-btn:hover {
+  color: var(--brass-hi);
+}
+
 .tab-btn.active {
-  background: var(--crema-scura);
-  color: var(--marrone);
-  box-shadow: inset 0 -2px 0 var(--marrone);
+  background: var(--ink-2);
+  color: var(--brass-hi);
+  box-shadow: inset 0 -2px 0 var(--brass);
+  border: 1px solid var(--line);
+  border-bottom: none;
 }
 
 .tab-panel {
@@ -375,8 +476,11 @@ button:disabled {
 /* ---------- Servizi ---------- */
 
 .services-panel h2, .orari-panel h2 {
-  font-size: 1.05rem;
-  color: var(--marrone);
+  font-family: "Bebas Neue", "Oswald", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  font-size: 1.4rem;
+  color: var(--cream);
   margin-top: 0;
 }
 
@@ -384,8 +488,8 @@ button:disabled {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.55rem 0.2rem;
-  border-bottom: 1px solid var(--bordo);
+  padding: 0.6rem 0.2rem;
+  border-bottom: 1px solid var(--line);
   gap: 0.6rem;
 }
 
@@ -394,12 +498,14 @@ button:disabled {
 }
 
 .closure-row .closure-info .closure-date {
-  font-weight: 600;
+  font-family: "Oswald", sans-serif;
+  font-weight: 500;
+  color: var(--cream);
 }
 
 .closure-row .closure-info .closure-motivo {
-  color: var(--testo-secondario);
-  font-size: 0.82rem;
+  color: var(--cream-dim);
+  font-size: 0.8rem;
 }
 
 .add-service-form {
@@ -413,8 +519,8 @@ button:disabled {
 }
 
 .empty-state {
-  color: var(--testo-secondario);
-  font-size: 0.88rem;
+  color: var(--cream-dim);
+  font-size: 0.85rem;
   padding: 0.8rem 0.2rem;
   font-style: italic;
 }
@@ -424,7 +530,7 @@ button:disabled {
 .orari-section {
   margin-bottom: 1.6rem;
   padding-bottom: 1.4rem;
-  border-bottom: 1px solid var(--bordo);
+  border-bottom: 1px solid var(--line);
 }
 
 .orari-section:last-child {
@@ -432,8 +538,12 @@ button:disabled {
 }
 
 .orari-section h3 {
-  font-size: 0.95rem;
-  color: var(--marrone);
+  font-family: "Oswald", sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.85rem;
+  color: var(--brass-hi);
   margin: 0 0 0.6rem;
 }
 
@@ -447,10 +557,12 @@ button:disabled {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  background: var(--crema-scura);
-  border-radius: 6px;
+  background: var(--ink-3);
+  border: 1px solid var(--line);
+  border-radius: 8px;
   padding: 0.5rem 0.6rem;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+  color: var(--cream);
 }
 
 .weekday-chip input {
@@ -497,8 +609,11 @@ button:disabled {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  color: var(--testo-secondario);
-  font-size: 0.9rem;
+  color: var(--cream-dim);
+  font-family: "Oswald", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.85rem;
   padding: 2rem 0;
   justify-content: center;
 }
@@ -506,8 +621,8 @@ button:disabled {
 .spinner {
   width: 18px;
   height: 18px;
-  border: 3px solid var(--bordo);
-  border-top-color: var(--marrone);
+  border: 3px solid var(--line);
+  border-top-color: var(--brass);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
@@ -521,11 +636,15 @@ button:disabled {
   bottom: 1.2rem;
   left: 50%;
   transform: translateX(-50%) translateY(20px);
-  background: var(--marrone-scuro);
-  color: #fff;
+  background: var(--ink-2);
+  border: 1px solid var(--brass);
+  color: var(--cream);
   padding: 0.7rem 1.2rem;
-  border-radius: 8px;
-  font-size: 0.88rem;
+  border-radius: 10px;
+  font-family: "Oswald", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.8rem;
   box-shadow: var(--ombra-modal);
   opacity: 0;
   pointer-events: none;
@@ -539,38 +658,88 @@ button:disabled {
 }
 
 .toast.error {
-  background: var(--errore);
+  border-color: var(--occupato);
+  color: var(--occupato-hi);
 }
 
 /* ---------- FullCalendar tweaks ---------- */
 
 .fc {
-  font-family: inherit;
+  font-family: "Inter", sans-serif;
+  --fc-border-color: var(--line);
+  --fc-page-bg-color: transparent;
+  --fc-neutral-bg-color: var(--ink-3);
+  --fc-list-event-hover-bg-color: var(--ink-3);
+  --fc-today-bg-color: rgba(199, 154, 78, 0.1);
 }
 
 .fc .fc-toolbar-title {
-  font-size: 1.15rem;
-  color: var(--marrone);
+  font-family: "Bebas Neue", "Oswald", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  font-size: 1.3rem;
+  color: var(--cream);
+}
+
+.fc .fc-col-header-cell-cushion,
+.fc .fc-daygrid-day-number {
+  color: var(--cream-dim);
+  font-family: "Oswald", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  text-decoration: none;
+}
+
+.fc .fc-timegrid-slot-label-cushion {
+  color: var(--cream-dim);
+  font-family: "Oswald", sans-serif;
+  font-size: 0.75rem;
+}
+
+.fc-theme-standard td, .fc-theme-standard th {
+  border-color: var(--line);
+}
+
+.fc .fc-scrollgrid {
+  border-color: var(--line);
 }
 
 .fc .fc-button-primary {
-  background: var(--marrone);
-  border-color: var(--marrone);
+  background: var(--ink-2);
+  border-color: var(--line);
+  color: var(--cream);
+  font-family: "Oswald", sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  box-shadow: none;
 }
 
 .fc .fc-button-primary:hover {
-  background: var(--marrone-chiaro);
-  border-color: var(--marrone-chiaro);
+  background: var(--ink-3);
+  border-color: var(--brass);
+  color: var(--brass-hi);
 }
 
 .fc .fc-button-primary:not(:disabled).fc-button-active,
 .fc .fc-button-primary:not(:disabled):active {
-  background: var(--marrone-scuro);
-  border-color: var(--marrone-scuro);
+  background: var(--brass);
+  border-color: var(--brass);
+  color: var(--ink);
 }
 
-.fc-event-chiuso {
-  opacity: 0.5;
+.fc .fc-button-primary:focus,
+.fc .fc-button-primary:not(:disabled).fc-button-active:focus {
+  box-shadow: 0 0 0 3px rgba(199, 154, 78, 0.25);
+}
+
+.fc-event {
+  border-radius: 6px;
+}
+
+.fc-event.fc-bg-event {
+  opacity: 0.55;
 }
 
 /* ---------- Responsive ---------- */
@@ -581,7 +750,7 @@ button:disabled {
   }
 
   header.site-header h1 {
-    font-size: 1.05rem;
+    font-size: 1.3rem;
   }
 
   main {

@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Gestione appuntamenti - Barbiere</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✂️</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="../assets/css/style.css" />
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales-all.global.min.js"></script>
@@ -12,8 +15,11 @@
 <body>
 <header class="site-header">
   <div class="brand">
-    <span class="icon">✂️</span>
-    <h1>Gestione appuntamenti</h1>
+    <div class="pole" aria-hidden="true"></div>
+    <div class="brand-text">
+      <span class="eyebrow">Area riservata</span>
+      <h1>Gestione appuntamenti</h1>
+    </div>
   </div>
   <a href="#" id="logout-link" class="header-link">Esci</a>
 </header>

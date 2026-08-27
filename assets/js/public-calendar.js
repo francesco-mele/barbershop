@@ -48,7 +48,7 @@ function ricostruisci() {
       title: "Occupato",
       start: inizio,
       end: fine,
-      color: "#8b5e3c"
+      color: "#9E3B36"
     });
   });
 
@@ -60,7 +60,7 @@ function ricostruisci() {
       startTime: pausa.inizio,
       endTime: pausa.fine,
       display: "background",
-      color: "#c9756a"
+      color: "#C79A4E"
     });
   }
 
@@ -71,7 +71,7 @@ function ricostruisci() {
       start: c.data,
       allDay: true,
       display: "background",
-      color: "#c9756a"
+      color: "#C79A4E"
     });
   });
 
@@ -82,7 +82,7 @@ function ricostruisci() {
       start: `${c.data}T${c.oraInizio}`,
       end: `${c.data}T${c.oraFine}`,
       display: "background",
-      color: "#c9756a"
+      color: "#C79A4E"
     });
   });
 
