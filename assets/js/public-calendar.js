@@ -67,7 +67,7 @@ function ricostruisci() {
   // Chiusure per giorno intero (es. ferie, festività)
   Object.values(chiusureGiorno).forEach((c) => {
     calendar.addEvent({
-      title: c.motivo ? `Chiuso - ${c.motivo}` : "Chiuso",
+      title: "Chiuso",
       start: c.data,
       allDay: true,
       display: "background",
@@ -78,7 +78,7 @@ function ricostruisci() {
   // Chiusure per fascia oraria in data specifica
   Object.values(chiusureOrario).forEach((c) => {
     calendar.addEvent({
-      title: c.motivo ? `Chiuso - ${c.motivo}` : "Chiuso",
+      title: "Chiuso",
       start: `${c.data}T${c.oraInizio}`,
       end: `${c.data}T${c.oraFine}`,
       display: "background",
