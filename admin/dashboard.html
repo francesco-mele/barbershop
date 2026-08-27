@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gestione appuntamenti - Barbiere</title>
+<link rel="stylesheet" href="../assets/css/style.css" />
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales-all.global.min.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <h1>Gestione appuntamenti</h1>
+  <a href="#" id="logout-link">Esci</a>
+</header>
+
+<main>
+  <div class="card">
+    <p class="legend">Clicca su uno slot libero per creare un appuntamento, oppure su un appuntamento esistente per modificarlo o cancellarlo.</p>
+    <div id="calendar"></div>
+
+    <div class="services-panel">
+      <h2>Servizi</h2>
+      <div id="services-list"></div>
+      <form class="add-service-form" id="add-service-form">
+        <input type="text" id="new-service-name" placeholder="Nome nuovo servizio" required />
+        <button type="submit" class="secondary">Aggiungi</button>
+      </form>
+    </div>
+  </div>
+</main>
+
+<!-- Modale creazione/modifica appuntamento -->
+<div class="overlay" id="appointment-overlay">
+  <div class="modal">
+    <h2 id="modal-title">Nuovo appuntamento</h2>
+    <form id="appointment-form">
+      <input type="hidden" id="appointment-id" />
+
+      <label for="app-data">Data</label>
+      <input type="date" id="app-data" required />
+
+      <label for="app-ora">Ora</label>
+      <input type="time" id="app-ora" required />
+
+      <label for="app-durata">Durata (minuti)</label>
+      <input type="number" id="app-durata" min="5" step="5" value="30" required />
+
+      <label for="app-servizio">Servizio</label>
+      <select id="app-servizio" required></select>
+
+      <label for="app-nome">Nome cliente</label>
+      <input type="text" id="app-nome" required />
+
+      <label for="app-telefono">Telefono</label>
+      <input type="tel" id="app-telefono" />
+
+      <label for="app-note">Note</label>
+      <textarea id="app-note" rows="3"></textarea>
+
+      <div class="error-text" id="appointment-error"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="secondary" id="cancel-btn">Annulla</button>
+        <button type="button" class="danger" id="delete-btn" style="display:none;">Elimina</button>
+        <button type="submit" class="primary">Salva</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module" src="../assets/js/admin-calendar.js"></script>
+</body>
+</html>

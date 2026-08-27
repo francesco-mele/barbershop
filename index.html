@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Calendario prenotazioni - Barbiere</title>
+<link rel="stylesheet" href="assets/css/style.css" />
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales-all.global.min.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <h1>Calendario prenotazioni</h1>
+  <a href="admin/login.html">Area barbiere</a>
+</header>
+
+<main>
+  <div class="card">
+    <p class="legend">Vista pubblica: mostra solo gli orari occupati. Per prenotare, contatta direttamente il barbiere.</p>
+    <div id="calendar"></div>
+  </div>
+</main>
+
+<script type="module" src="assets/js/public-calendar.js"></script>
+</body>
+</html>
