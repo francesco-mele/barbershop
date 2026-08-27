@@ -258,6 +258,22 @@ main {
   color: var(--cream-dim);
 }
 
+.login-card p.back-link {
+  margin: 1.1rem 0 0;
+  text-align: center;
+  font-size: 0.82rem;
+}
+
+.login-card p.back-link a {
+  color: var(--cream-dim);
+  text-decoration: none;
+}
+
+.login-card p.back-link a:hover {
+  color: var(--brass-hi);
+  text-decoration: underline;
+}
+
 /* ---------- Form elements ---------- */
 
 label {
@@ -452,6 +468,8 @@ button:disabled {
 .modal-actions button {
   flex: 1;
   min-width: 100px;
+  width: auto;
+  margin-top: 0;
 }
 
 /* ---------- Tabs (dashboard) ---------- */

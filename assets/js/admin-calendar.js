@@ -63,6 +63,20 @@ const errorEl = document.getElementById("appointment-error");
 const deleteBtn = document.getElementById("delete-btn");
 const cancelBtn = document.getElementById("cancel-btn");
 
+// Durata selezionabile solo in multipli di 15 minuti (da 15 min a 3 ore)
+function formattaDurata(minuti) {
+  if (minuti < 60) return `${minuti} min`;
+  const ore = Math.floor(minuti / 60);
+  const resto = minuti % 60;
+  return resto === 0 ? `${ore} h` : `${ore} h ${resto} min`;
+}
+for (let m = 15; m <= 180; m += 15) {
+  const option = document.createElement("option");
+  option.value = m;
+  option.textContent = formattaDurata(m);
+  durataInput.appendChild(option);
+}
+
 function openModal(mode, evento) {
   errorEl.textContent = "";
   form.reset();

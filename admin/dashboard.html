@@ -82,11 +82,11 @@
         <div class="pausa-fields">
           <div>
             <label for="pausa-inizio">Inizio pausa</label>
-            <input type="time" id="pausa-inizio" value="13:00" />
+            <input type="time" id="pausa-inizio" value="13:00" step="900" lang="it-IT" />
           </div>
           <div>
             <label for="pausa-fine">Fine pausa</label>
-            <input type="time" id="pausa-fine" value="14:00" />
+            <input type="time" id="pausa-fine" value="14:00" step="900" lang="it-IT" />
           </div>
         </div>
         <button type="button" class="secondary" id="save-orari-btn" style="margin-top:0.8rem;">Salva orari</button>
@@ -126,11 +126,11 @@
           </div>
           <div>
             <label for="closure-time-inizio">Dalle</label>
-            <input type="time" id="closure-time-inizio" required />
+            <input type="time" id="closure-time-inizio" required step="900" lang="it-IT" />
           </div>
           <div>
             <label for="closure-time-fine">Alle</label>
-            <input type="time" id="closure-time-fine" required />
+            <input type="time" id="closure-time-fine" required step="900" lang="it-IT" />
           </div>
           <div>
             <label for="closure-time-motivo">Motivo (facoltativo)</label>
@@ -154,10 +154,10 @@
       <input type="date" id="app-data" required />
 
       <label for="app-ora">Ora</label>
-      <input type="time" id="app-ora" required />
+      <input type="time" id="app-ora" required step="900" lang="it-IT" />
 
-      <label for="app-durata">Durata (minuti)</label>
-      <input type="number" id="app-durata" min="5" step="5" value="30" required />
+      <label for="app-durata">Durata</label>
+      <select id="app-durata" required></select>
 
       <label for="app-servizio">Servizio</label>
       <select id="app-servizio" required></select>
