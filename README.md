@@ -28,6 +28,7 @@ firestore.rules                 regole di sicurezza Firestore da caricare in con
 - **config/orari** (documento singolo) → `giorniChiusuraSettimanali` (array di numeri 0-6, 0=domenica), `pausaAttiva` (bool), `pausaInizio`, `pausaFine` (`HH:MM`) — leggibile da chiunque, scrivibile solo dal barbiere.
 - **chiusure_giorno/{id}** → `data` (`YYYY-MM-DD`), `motivo` — chiusure per giornata intera (es. ferie), leggibile da chiunque, scrivibile solo dal barbiere.
 - **chiusure_orario/{id}** → `data`, `oraInizio`, `oraFine`, `motivo` — chiusure per una fascia oraria in una data specifica, leggibile da chiunque, scrivibile solo dal barbiere.
+- **config/anagrafica** (documento singolo) → `nomeAttivita`, `nomeBarbiere`, `indirizzo`, `cellulare` — leggibile da chiunque, scrivibile solo dal barbiere (tab "Anagrafica" della dashboard). Questi dati vengono applicati in tempo reale all'intestazione di tutte le pagine da [assets/js/site-header.js](assets/js/site-header.js).
 
 ## Configurazione passo-passo
 

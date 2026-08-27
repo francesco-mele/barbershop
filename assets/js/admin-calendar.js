@@ -504,3 +504,37 @@ addClosureTimeForm.addEventListener("submit", async (e) => {
   addClosureTimeForm.reset();
   mostraToast("Chiusura aggiunta");
 });
+
+// --- Anagrafica attività ---
+const anagraficaForm = document.getElementById("anagrafica-form");
+const anagraficaNomeAttivitaInput = document.getElementById("anagrafica-nome-attivita");
+const anagraficaNomeBarbiereInput = document.getElementById("anagrafica-nome-barbiere");
+const anagraficaIndirizzoInput = document.getElementById("anagrafica-indirizzo");
+const anagraficaCellulareInput = document.getElementById("anagrafica-cellulare");
+const anagraficaErrorEl = document.getElementById("anagrafica-error");
+
+onSnapshot(doc(db, "config", "anagrafica"), (docSnap) => {
+  const dati = docSnap.data() || {};
+  anagraficaNomeAttivitaInput.value = dati.nomeAttivita || "";
+  anagraficaNomeBarbiereInput.value = dati.nomeBarbiere || "";
+  anagraficaIndirizzoInput.value = dati.indirizzo || "";
+  anagraficaCellulareInput.value = dati.cellulare || "";
+});
+
+anagraficaForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  anagraficaErrorEl.textContent = "";
+
+  try {
+    await setDoc(doc(db, "config", "anagrafica"), {
+      nomeAttivita: anagraficaNomeAttivitaInput.value.trim(),
+      nomeBarbiere: anagraficaNomeBarbiereInput.value.trim(),
+      indirizzo: anagraficaIndirizzoInput.value.trim(),
+      cellulare: anagraficaCellulareInput.value.trim()
+    });
+    mostraToast("Anagrafica salvata");
+  } catch (err) {
+    anagraficaErrorEl.textContent = "Errore durante il salvataggio. Riprova.";
+    console.error(err);
+  }
+});

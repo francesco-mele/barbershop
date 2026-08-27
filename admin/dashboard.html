@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gestione appuntamenti - Barbiere</title>
+<title>Barber Shop</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✂️</text></svg>" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,8 +17,8 @@
   <div class="brand">
     <div class="pole" aria-hidden="true"></div>
     <div class="brand-text">
-      <span class="eyebrow">Barber Shop · Area riservata</span>
-      <h1>Gestione appuntamenti</h1>
+      <h1><span class="site-nome-attivita">Barber Shop</span> <span class="header-desc">- Gestione appuntamenti</span></h1>
+      <div class="contact-line"></div>
     </div>
   </div>
   <a href="#" id="logout-link" class="header-link">Esci</a>
@@ -29,6 +29,7 @@
     <button class="tab-btn active" data-tab="tab-calendario">Calendario</button>
     <button class="tab-btn" data-tab="tab-servizi">Servizi</button>
     <button class="tab-btn" data-tab="tab-orari">Orari e chiusure</button>
+    <button class="tab-btn" data-tab="tab-anagrafica">Anagrafica</button>
   </div>
 
   <!-- TAB CALENDARIO -->
@@ -141,6 +142,31 @@
       </div>
     </div>
   </div>
+
+  <!-- TAB ANAGRAFICA -->
+  <div class="tab-panel" id="tab-anagrafica">
+    <div class="card">
+      <h2>Anagrafica attività</h2>
+      <p class="hint-text">Queste informazioni compaiono nell'intestazione di tutte le pagine (calendario pubblico, login, area riservata).</p>
+      <form id="anagrafica-form">
+        <label for="anagrafica-nome-attivita">Nome attività</label>
+        <input type="text" id="anagrafica-nome-attivita" required />
+
+        <label for="anagrafica-nome-barbiere">Nome barbiere</label>
+        <input type="text" id="anagrafica-nome-barbiere" />
+
+        <label for="anagrafica-indirizzo">Indirizzo attività</label>
+        <input type="text" id="anagrafica-indirizzo" placeholder="es. Via Roma 1, Salerno" />
+
+        <label for="anagrafica-cellulare">Numero cellulare</label>
+        <input type="tel" id="anagrafica-cellulare" placeholder="es. 3331234567" />
+
+        <div class="error-text" id="anagrafica-error"></div>
+
+        <button type="submit" class="primary">Salva anagrafica</button>
+      </form>
+    </div>
+  </div>
 </main>
 
 <!-- Modale creazione/modifica appuntamento -->
@@ -184,6 +210,7 @@
 
 <div class="toast" id="toast"></div>
 
+<script type="module" src="../assets/js/site-header.js"></script>
 <script type="module" src="../assets/js/admin-calendar.js"></script>
 </body>
 </html>
