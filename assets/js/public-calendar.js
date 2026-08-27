@@ -12,11 +12,10 @@ const calendar = new FullCalendar.Calendar(calendarEl, {
     center: "title",
     right: "dayGridMonth,timeGridWeek,timeGridDay"
   },
-  slotMinTime: "08:00:00",
+  slotMinTime: "06:00:00",
   slotMaxTime: "20:00:00",
   allDaySlot: false,
   height: "auto",
-  hiddenDays: [],
   events: []
 });
 
@@ -29,6 +28,18 @@ function mostraCalendario() {
   calendar.render();
 }
 
+// Aggiunge "giorni" giorni a una data in formato YYYY-MM-DD (per estremi esclusivi FullCalendar)
+// Nota: calcolo interamente in ora locale, senza passare da toISOString(), per evitare
+// che la conversione UTC sposti la data di un giorno a seconda del fuso orario.
+function aggiungiGiorni(dataIso, giorni) {
+  const [y, m, d] = dataIso.split("-").map(Number);
+  const data = new Date(y, m - 1, d + giorni);
+  const yyyy = data.getFullYear();
+  const mm = String(data.getMonth() + 1).padStart(2, "0");
+  const dd = String(data.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 // --- Stato locale, ricostruito ad ogni cambiamento su una qualsiasi fonte ---
 let appuntamenti = {};
 let giorniChiusuraSettimanali = [];
@@ -37,7 +48,6 @@ let chiusureGiorno = {};
 let chiusureOrario = {};
 
 function ricostruisci() {
-  calendar.setOption("hiddenDays", giorniChiusuraSettimanali);
   calendar.removeAllEvents();
 
   // Appuntamenti: nella vista pubblica non si mostra il servizio, solo "Occupato".
@@ -49,6 +59,17 @@ function ricostruisci() {
       start: inizio,
       end: fine,
       color: "#9E3B36"
+    });
+  });
+
+  // Giorni di chiusura settimanali: sempre visibili, mostrati come l'intera giornata "chiusa"
+  giorniChiusuraSettimanali.forEach((dow) => {
+    calendar.addEvent({
+      title: "Chiuso",
+      daysOfWeek: [dow],
+      allDay: true,
+      display: "background",
+      color: "#C79A4E"
     });
   });
 
@@ -64,11 +85,13 @@ function ricostruisci() {
     });
   }
 
-  // Chiusure per giorno intero (es. ferie, festività)
+  // Chiusure per intervallo di date (es. ferie, festività)
   Object.values(chiusureGiorno).forEach((c) => {
+    const fine = c.dataFine || c.dataInizio || c.data;
     calendar.addEvent({
       title: "Chiuso",
-      start: c.data,
+      start: c.dataInizio || c.data,
+      end: aggiungiGiorni(fine, 1),
       allDay: true,
       display: "background",
       color: "#C79A4E"

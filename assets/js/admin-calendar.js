@@ -112,12 +112,11 @@ const calendar = new FullCalendar.Calendar(calendarEl, {
     center: "title",
     right: "dayGridMonth,timeGridWeek,timeGridDay"
   },
-  slotMinTime: "08:00:00",
+  slotMinTime: "06:00:00",
   slotMaxTime: "20:00:00",
   allDaySlot: false,
   height: "auto",
   selectable: true,
-  hiddenDays: [],
   dateClick: (info) => openModal("new", info),
   eventClick: (info) => {
     if (info.event.display === "background") return; // le chiusure si gestiscono dalla tab "Orari"
@@ -142,8 +141,19 @@ let pausa = null;
 let chiusureGiornoSnap = {};
 let chiusureOrarioSnap = {};
 
+// Aggiunge "giorni" giorni a una data in formato YYYY-MM-DD (per estremi esclusivi FullCalendar)
+// Nota: calcolo interamente in ora locale, senza passare da toISOString(), per evitare
+// che la conversione UTC sposti la data di un giorno a seconda del fuso orario.
+function aggiungiGiorni(dataIso, giorni) {
+  const [y, m, d] = dataIso.split("-").map(Number);
+  const data = new Date(y, m - 1, d + giorni);
+  const yyyy = data.getFullYear();
+  const mm = String(data.getMonth() + 1).padStart(2, "0");
+  const dd = String(data.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 function ricostruisciCalendario() {
-  calendar.setOption("hiddenDays", giorniChiusuraSettimanali);
   calendar.removeAllEvents();
 
   Object.keys(pubbliciSnapshot).forEach((id) => {
@@ -161,6 +171,17 @@ function ricostruisciCalendario() {
     });
   });
 
+  // Giorni di chiusura settimanali: sempre visibili, mostrati come l'intera giornata "chiusa"
+  giorniChiusuraSettimanali.forEach((dow) => {
+    calendar.addEvent({
+      title: "Chiuso",
+      daysOfWeek: [dow],
+      allDay: true,
+      display: "background",
+      color: "#C79A4E"
+    });
+  });
+
   if (pausa && pausa.attiva && pausa.inizio && pausa.fine) {
     calendar.addEvent({
       title: "Chiuso (pausa)",
@@ -173,9 +194,11 @@ function ricostruisciCalendario() {
   }
 
   Object.values(chiusureGiornoSnap).forEach((c) => {
+    const fine = c.dataFine || c.dataInizio || c.data;
     calendar.addEvent({
       title: c.motivo ? `Chiuso - ${c.motivo}` : "Chiuso",
-      start: c.data,
+      start: c.dataInizio || c.data,
+      end: aggiungiGiorni(fine, 1),
       allDay: true,
       display: "background",
       color: "#C79A4E"
@@ -364,12 +387,15 @@ onSnapshot(collection(db, "chiusure_giorno"), (snapshot) => {
     chiusureGiornoSnap[docSnap.id] = docSnap.data();
     righe.push({ id: docSnap.id, ...docSnap.data() });
   });
-  righe.sort((a, b) => a.data.localeCompare(b.data));
+  righe.sort((a, b) => (a.dataInizio || a.data).localeCompare(b.dataInizio || b.data));
 
   righe.forEach((c) => {
+    const inizio = c.dataInizio || c.data;
+    const fine = c.dataFine || c.dataInizio || c.data;
+    const etichettaData = inizio === fine ? inizio : `${inizio} → ${fine}`;
     const row = document.createElement("div");
     row.className = "closure-row";
-    row.innerHTML = `<div class="closure-info"><div class="closure-date">${c.data}</div>${c.motivo ? `<div class="closure-motivo">${c.motivo}</div>` : ""}</div>`;
+    row.innerHTML = `<div class="closure-info"><div class="closure-date">${etichettaData}</div>${c.motivo ? `<div class="closure-motivo">${c.motivo}</div>` : ""}</div>`;
     const delBtn = document.createElement("button");
     delBtn.className = "link-btn";
     delBtn.textContent = "Elimina";
@@ -386,13 +412,29 @@ onSnapshot(collection(db, "chiusure_giorno"), (snapshot) => {
   ricostruisciCalendario();
 });
 
+const closureDayInizioInput = document.getElementById("closure-day-date-inizio");
+const closureDayFineInput = document.getElementById("closure-day-date-fine");
+const closureDayErrorEl = document.getElementById("closure-day-error");
+
+// Comodità: quando si sceglie la data di inizio, precompila la data di fine se vuota
+closureDayInizioInput.addEventListener("change", () => {
+  if (!closureDayFineInput.value) closureDayFineInput.value = closureDayInizioInput.value;
+});
+
 addClosureDayForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const data = document.getElementById("closure-day-date").value;
+  closureDayErrorEl.textContent = "";
+  const dataInizio = closureDayInizioInput.value;
+  const dataFine = closureDayFineInput.value || dataInizio;
   const motivo = document.getElementById("closure-day-motivo").value.trim();
-  if (!data) return;
+  if (!dataInizio) return;
 
-  await addDoc(collection(db, "chiusure_giorno"), { data, motivo });
+  if (dataFine < dataInizio) {
+    closureDayErrorEl.textContent = "La data di fine non può precedere la data di inizio.";
+    return;
+  }
+
+  await addDoc(collection(db, "chiusure_giorno"), { dataInizio, dataFine, motivo });
   addClosureDayForm.reset();
   mostraToast("Chiusura aggiunta");
 });

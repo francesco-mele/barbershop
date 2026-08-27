@@ -95,12 +95,16 @@
 
       <div class="orari-section">
         <h3>Chiusure per data intera</h3>
-        <p class="hint-text">Es. ferie, festività. Blocca l'intera giornata indicata.</p>
+        <p class="hint-text">Es. ferie, festività. Blocca l'intera giornata, o un intervallo di più giorni.</p>
         <div id="closures-day-list"></div>
         <form class="add-closure-form" id="add-closure-day-form">
           <div>
-            <label for="closure-day-date">Data</label>
-            <input type="date" id="closure-day-date" required />
+            <label for="closure-day-date-inizio">Dal</label>
+            <input type="date" id="closure-day-date-inizio" required />
+          </div>
+          <div>
+            <label for="closure-day-date-fine">Al</label>
+            <input type="date" id="closure-day-date-fine" />
           </div>
           <div>
             <label for="closure-day-motivo">Motivo (facoltativo)</label>
@@ -108,6 +112,7 @@
           </div>
           <button type="submit" class="secondary">Aggiungi</button>
         </form>
+        <span class="error-text" id="closure-day-error"></span>
       </div>
 
       <div class="orari-section">
