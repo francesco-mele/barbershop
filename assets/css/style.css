@@ -101,13 +101,18 @@ header.site-header .brand-text {
   min-width: 0;
 }
 
-header.site-header .eyebrow {
+.eyebrow {
   font-family: "Oswald", sans-serif;
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   font-size: 10px;
   color: var(--brass);
+}
+
+.login-card .eyebrow {
+  display: block;
+  margin-bottom: 0.2rem;
 }
 
 header.site-header h1 {
@@ -118,6 +123,21 @@ header.site-header h1 {
   letter-spacing: 0.02em;
   color: var(--cream);
   line-height: 1;
+}
+
+header.site-header .contact-line {
+  font-size: 0.78rem;
+  color: var(--cream-dim);
+  margin-top: 3px;
+}
+
+header.site-header .contact-line a {
+  color: var(--brass-hi);
+  text-decoration: none;
+}
+
+header.site-header .contact-line a:hover {
+  text-decoration: underline;
 }
 
 header.site-header a.header-link {
