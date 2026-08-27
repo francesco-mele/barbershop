@@ -70,34 +70,17 @@ header.site-header .brand {
 
 .pole {
   flex: 0 0 auto;
+  display: block;
   width: 12px;
   height: 44px;
   border-radius: 6px;
-  border: 1px solid var(--line);
-  background-image: repeating-linear-gradient(
-    -45deg,
-    var(--occupato) 0 6px,
-    var(--cream) 6px 12px,
-    #2E5B8A 12px 18px,
-    var(--cream) 18px 24px
-  );
-  background-size: 100% 34px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) inset;
-  animation: pole 2.4s linear infinite;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
 }
 
 .login-card .pole {
   width: 18px;
   height: 68px;
   margin: 0 auto 1rem;
-}
-
-@keyframes pole {
-  to { background-position: 0 -34px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pole { animation: none; }
 }
 
 header.site-header .brand-text {
