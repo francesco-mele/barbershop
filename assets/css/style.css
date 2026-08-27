@@ -258,20 +258,8 @@ main {
   color: var(--cream-dim);
 }
 
-.login-card p.back-link {
-  margin: 1.1rem 0 0;
-  text-align: center;
-  font-size: 0.82rem;
-}
-
-.login-card p.back-link a {
-  color: var(--cream-dim);
-  text-decoration: none;
-}
-
-.login-card p.back-link a:hover {
-  color: var(--brass-hi);
-  text-decoration: underline;
+.login-card .back-link {
+  margin-top: 0.7rem;
 }
 
 /* ---------- Form elements ---------- */
@@ -334,7 +322,8 @@ input::placeholder, textarea::placeholder {
 
 /* ---------- Buttons ---------- */
 
-button {
+button, a.primary, a.secondary, a.danger, a.link-btn {
+  box-sizing: border-box;
   cursor: pointer;
   border-radius: 8px;
   padding: 0.6rem 1.1rem;
@@ -343,22 +332,26 @@ button {
   font-family: "Oswald", sans-serif;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  display: inline-block;
+  line-height: 1.4;
   border: 1px solid var(--line);
   background: var(--ink-2);
   color: var(--cream);
   transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease, transform 0.1s ease;
 }
 
-button:active {
+button:active, a.primary:active, a.secondary:active, a.danger:active {
   transform: scale(0.98);
 }
 
-button:hover {
+button:hover, a.primary:hover, a.secondary:hover, a.danger:hover, a.link-btn:hover {
   border-color: var(--brass);
   color: var(--brass-hi);
 }
 
-button.primary {
+.primary, a.primary {
   background: var(--brass);
   color: var(--ink);
   border-color: var(--brass);
@@ -366,30 +359,30 @@ button.primary {
   width: 100%;
 }
 
-button.primary:hover {
+.primary:hover, a.primary:hover {
   background: var(--brass-hi);
   border-color: var(--brass-hi);
   color: var(--ink);
 }
 
-button.secondary {
+.secondary, a.secondary {
   background: var(--ink-2);
   color: var(--cream);
 }
 
-button.danger {
+.danger, a.danger {
   background: transparent;
   color: var(--occupato-hi);
   border-color: var(--occupato);
 }
 
-button.danger:hover {
+.danger:hover, a.danger:hover {
   background: var(--occupato);
   color: var(--cream);
   border-color: var(--occupato);
 }
 
-button.link-btn {
+.link-btn, a.link-btn {
   background: transparent;
   border: none;
   color: var(--occupato-hi);
@@ -397,7 +390,7 @@ button.link-btn {
   font-size: 0.72rem;
 }
 
-button.link-btn:hover {
+.link-btn:hover, a.link-btn:hover {
   color: var(--occupato);
   border-color: transparent;
 }
@@ -459,16 +452,15 @@ button:disabled {
 }
 
 .modal-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 0.6rem;
   margin-top: 1.3rem;
-  flex-wrap: wrap;
 }
 
 .modal-actions button {
-  flex: 1;
-  min-width: 100px;
-  width: auto;
+  width: 100%;
+  min-width: 0;
   margin-top: 0;
 }
 
